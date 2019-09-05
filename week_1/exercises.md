@@ -76,14 +76,14 @@ x := x + 1;
 bottom line to me reads like this:
 
 ```
-If a is 0 then x is 8*b+1 && if a > 0 then x = 12*b+1
+If a is <= 0 then x is 8*b+1 && if a > 0 then x = 12*b+1
 ```
 
 If I were to write that in code (elixir) it would be:
 
 ```elixir
 x = case a do
-  0 -> 8*b+1
+  a when a <= 0 -> 8*b+1
   a when a > 0 -> 12*b+1
 end
 
@@ -143,6 +143,7 @@ x := x + 1;
 
 My instinct is to do this but don't know how that helps? I think that not being fully confident in Exercise 3 makes this difficult.
 
+```
 { true }
 d := (2−(a+1)/a)/2;
 m := d∗2 + (1 − d) ∗ 3;
@@ -150,5 +151,26 @@ x := m ∗ x;
 x := b ∗ 2;
 x := x ∗ 2;
 x := x + 1;
+```
+
+### Exercise 5
+
+Prove this sequential search procedure correct by choosing a proper loop invariant:
+
+```
+{ true }
+i := 0
+{  }
+while arr[i] != val && i < n do
+{ arr[i] != val, && 1 < n }
+i := i+1
+{ i > 0, }
+end
+{ arr[i] == val || (forall j, (j>= 0 && j<n) => arr[j] != val) }
+```
+
+
+
+
 
 
