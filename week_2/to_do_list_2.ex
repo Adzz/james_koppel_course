@@ -1,10 +1,3 @@
-# Your task is to design the data layer for a to-do list app.
-# Create the core data structures that track state, along with
-# an API that can be connected to any frontend (command-line, web, desktop GUI, etc).
-# Initial Design
-# In the basic version, a task is either done or not done. A user should be able
-# to create and delete todo items, view the list to do, and mark items as done.
-
 # First round of feature requests
 # Extend your design to support two of the following features:
 
