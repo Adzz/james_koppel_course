@@ -47,6 +47,8 @@ defprotocol ToDo.List do
   def delete_task(list, task)
   def complete_task(list, task)
   def sort_by(list, sorting_factor)
+  def step_back(list)
+  def step_forward(list)
 end
 
 defmodule User do
@@ -76,16 +78,28 @@ defmodule User do
     end
   end
 
+  # these are just the domain of the persistent list really. So is the protocol the wrong move
+  # or do we have to understand what the previous list means for a regular old list. Could just
+  # mean it's the same as it ever was. Or could mean it
+  def view_previous_list() do
+    ToDo.List.view_previous()
+  end
+
+  def view_next_list() do
+    ToDo.List.view_next()
+  end
+
   defp update_user_to_do_list(user = %User{}, new_list) do
     %{user | to_do_list: new_list}
   end
 end
 
 defmodule ToDo.List.Persistent do
-  defstruct [:list_history]
+  defstruct [:list_history, :present]
 
   defimpl ToDo.List do
-    def view(list = %{list_history: [latest | _]}, task_type) do
+    def view(list = %{list_history: history, present: present_index}, task_type) do
+      latest = Enum.at(history, present_index)
       ToDo.List.view(latest, task_type)
     end
 
@@ -110,9 +124,17 @@ defmodule ToDo.List.Persistent do
       update_list_history(list, [new_list | history])
     end
 
+    def step_back(list = %{list_history: history, present: present_index}) do
+      # Step back and step forward only allow viewing of the past lists, not editing them
+      view(%{list | present: present_index - 1})
+    end
+
+    def step_forward(list = %{list_history: history, present: present_index}) do
+      # Step back and step forward only allow viewing of the past lists, not editing them
+      view(%{list | present: present_index + 1})
+    end
+
     defp update_list_history(history, new_history), do: %{history | list_history: new_history}
-    defp update_list(list, new_task_list), do: %{list | task_list: order_task_list(new_task_list)}
-    defp order_task_list(task_list), do: Enum.sort_by(task_list, & &1.order)
   end
 end
 
@@ -158,6 +180,8 @@ defmodule ToDo.List.Regular do
       update_list(list, new_task_list)
     end
 
+    def step_back(list), do: list
+    def step_forward(list), do: list
     defp update_list(list, new_task_list), do: %{list | task_list: order_task_list(new_task_list)}
     defp order_task_list(task_list), do: Enum.sort_by(task_list, & &1.order)
   end
